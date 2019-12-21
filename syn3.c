@@ -1,5 +1,5 @@
 #include"lex2.h"
-#include"syn2.h"
+#include"syn3.h"
 
 int main()
 {
@@ -7,7 +7,6 @@ int main()
     FILE *fp;
     int i=0;
     lexeme lex[N][N];
-    arb Arbre = (struct arbre*)malloc(sizeof(struct arbre));
     //si on ne peut pas ouvrir le fichier, on ne peut rien faire.
     if((fp=fopen(text,"r"))==NULL)
     {
@@ -20,9 +19,6 @@ int main()
         if(buf[0]=='\n'|| buf[0]=='\r') continue; //si la ligne est vide, on continue
         else {  classer(lex,i++,buf);}
     }
-    if(syntaxique(lex,i,Arbre))
-    {
-        printArbre(Arbre);
-    }
+    syntaxique(lex,i);
     return 0;
 }
