@@ -1,7 +1,7 @@
 #include"lex1.h"
 #include"syn4.h"
 
-#define text "test.txt"
+#define text "Test.txt"
 
 int main()
 {

@@ -1,6 +1,6 @@
 #include"lex1.h"
 
-#define text "test.txt"
+#define text "Test.txt"
 
 int main()
 {

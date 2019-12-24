@@ -17,7 +17,7 @@ typedef struct transition
 typedef struct Etat
 {
     char name[40];
-    int numero;
+    int numero; //nombre de transitions
     transition tran[50];
 } Etat;
 
@@ -26,6 +26,7 @@ typedef struct arbre
     int nom_pile;
     int nom_etat;
     Etat etat[maxEtat];
+    int nom_max_etat;
     int etat_initial;
     int nom_final;
     int etat_final[20];
@@ -104,19 +105,19 @@ void printArbre(arb Arbre)
         printf("Etat %d avec le nom \"%s\" a %d transitions.\n",kk,Arbre->etat[kk].name,Arbre->etat[kk].numero);
         for(int ii=0;ii<Arbre->etat[kk].numero;ii++)
         {
-            printf("%d -> %d avec input '%c'  ", kk,Arbre->etat[kk].tran[ii].to,Arbre->etat[kk].tran[ii].input);
+            printf("%d -> %d avec input '%c' utilise %d piles, ", kk,Arbre->etat[kk].tran[ii].to,Arbre->etat[kk].tran[ii].input, Arbre->etat[kk].tran[ii].numberP);
             for(int jj=0;jj<Arbre->etat[kk].tran[ii].numberP;jj++)
             {
                 switch(Arbre->etat[kk].tran[ii].ppile[jj].piler)
                 {
                     case 1:
-                        printf("pile %d: enpiler '%c' ",jj,Arbre->etat[kk].tran[ii].ppile[jj].element);
+                        printf("pile %d: enpiler '%c', ",jj,Arbre->etat[kk].tran[ii].ppile[jj].element);
                         break;
                     case -1:
-                        printf("pile %d: depiler '%c' ",jj,Arbre->etat[kk].tran[ii].ppile[jj].element);
+                        printf("pile %d: depiler '%c', ",jj,Arbre->etat[kk].tran[ii].ppile[jj].element);
                         break;
                     case 0:
-                        printf("pile %d: rien ",jj);
+                        printf("pile %d: rien fait, ",jj);
                         break;
                 }
             }
@@ -139,6 +140,7 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
     int etat_initial;
     int etat_final[N]={0};
     int from;
+    arbr->nom_max_etat=0;
     while(i<high && i<N &&lex[i][0].valeur!=NULL)
     {
         int j=0;
@@ -593,6 +595,7 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     from=10*from+(lex[i][j].valeur[kk]-'0');
                                     kk++;
                                 }
+                                if(from>arbr->nom_max_etat) arbr->nom_max_etat=from;
                                 break;
                             default:
                                 error(e,lex[i][j].valeur);
@@ -621,6 +624,7 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     kk++;
                                 }
                                 arbr->etat[from].tran[arbr->etat[from].numero].numberP=0;
+                                if(arbr->etat[from].tran[arbr->etat[from].numero].to>arbr->nom_max_etat) arbr->nom_max_etat=arbr->etat[from].tran[arbr->etat[from].numero].to;
                                 arbr->etat[from].numero++;
                                 break;
                             default:
@@ -703,7 +707,7 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                         {
                             case Par_ou:
                                 if(!p.push(1)){error(e,lex[i][j].valeur); return 0;}
-                                arbr->etat[from].tran[arbr->etat[from].numero].numberP++;
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].numberP++;
                                 e=36;
                                 break;
                             default:
@@ -738,8 +742,8 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     error(e,lex[i][j].valeur);
                                     return 0;
                                 }
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].element=lex[i][j].valeur[0];
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].piler=-1;
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].element=lex[i][j].valeur[0];
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].piler=-1;
                                 e=38;
                                 break;
                             case NOMBRE:
@@ -748,8 +752,8 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     error(e,lex[i][j].valeur);
                                     return 0;
                                 }
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].element=lex[i][j].valeur[0];
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].piler=-1;
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].element=lex[i][j].valeur[0];
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].piler=-1;
                                 e=38;
                                 break;
                             default:
@@ -828,8 +832,8 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     error(e,lex[i][j].valeur);
                                     return 0;
                                 }
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].element=lex[i][j].valeur[0];
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].piler=1;
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].element=lex[i][j].valeur[0];
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].piler=1;
                                 e=45;
                                 break;
                             case MOT:
@@ -838,8 +842,8 @@ int syntaxique(lexeme lex[][N],int high, arb arbr)
                                     error(e,lex[i][j].valeur);
                                     return 0;
                                 }
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].element=lex[i][j].valeur[0];
-                                arbr->etat[from].tran[arbr->etat[from].numero].ppile[arbr->etat[from].tran[arbr->etat[from].numero].numberP-1].piler=1;
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].element=lex[i][j].valeur[0];
+                                arbr->etat[from].tran[arbr->etat[from].numero-1].ppile[arbr->etat[from].tran[arbr->etat[from].numero-1].numberP-1].piler=1;
                                 e=45;
                                 break;
                             default:

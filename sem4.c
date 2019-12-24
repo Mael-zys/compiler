@@ -1,8 +1,8 @@
 #include"lex1.h"
-#include"syn1.h"
-#include"sem1.h"
+#include"syn4.h"
+#include"sem4.h"
 
-#define text "test.txt"
+#define text "Test.txt"
 
 int main()
 {
