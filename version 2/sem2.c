@@ -1,11 +1,10 @@
-#include"analyseur_lexical.h"
-#include"analyseur_syntaxique.h"
-#include"analyseur_semantique.h"
-#include"compile_automate.h"
+#include"lex2.h"
+#include"syn2.h"
+#include"sem2.h"
 
 int main(int argc, char* argv[])
 {
-    if(argc!=2)
+    if(argc!=2) 
     {
         printf("erreur, manque ou trop d'arguments\n");
         return 0;
@@ -30,10 +29,7 @@ int main(int argc, char* argv[])
     if(syntaxique(lex,i,Arbre))
     {
         if(semantique(Arbre))
-        {
-            printf("0 warning, 0 erreur\n");
-            compiler(Arbre, argv[1]);
-        }
+            printf("correct semantique\n");
     }
     return 0;
 }

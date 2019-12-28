@@ -36,22 +36,12 @@ int semantique(arb arbre)
     // sorter les transitions.
     for(int kk=0;kk<arbre->nom_tran;kk++)
         for(int ii=0;ii<arbre->nom_tran-kk-1;ii++)
-            if(arbre->tran[ii].from>arbre->tran[ii+1].from) 
+            if(arbre->tran[ii].from > arbre->tran[ii+1].from) 
             {
                 transition temp=arbre->tran[ii];
                 arbre->tran[ii]=arbre->tran[ii+1];
                 arbre->tran[ii+1]=temp;
             }
-    
-    for(int kk=0;kk<arbre->nom_tran;kk++)
-        for(int ii=0;ii<arbre->nom_tran-kk-1;ii++)
-            if(arbre->tran[ii].to>arbre->tran[ii+1].to) 
-            {
-                transition temp=arbre->tran[ii];
-                arbre->tran[ii]=arbre->tran[ii+1];
-                arbre->tran[ii+1]=temp;
-            }
-    
 
     // si un etat depart a 2 memes inputs 
     for(int kk=0;kk<arbre->nom_tran;kk++)
@@ -67,62 +57,65 @@ int semantique(arb arbre)
 
 
     //noter les caracteres enpile et depile dans une liste
-    int nom_carac=0;
-    char carac[50];
+    int nom_pile=arbre->nom_pile;
+    int nom_carac[nom_pile];
+    for(int kk=0;kk<nom_pile;kk++)
+        nom_carac[kk]=0;
+    char carac[nom_pile][50];
     for(int kk=0;kk<arbre->nom_tran;kk++)
         for(int ii=0;ii<arbre->tran[kk].nomP;ii++)
         {
             int exist=0;
-            for(int jj=0;jj<nom_carac;jj++)
+            for(int jj=0;jj<nom_carac[ii];jj++)
             {
-                if(arbre->tran[kk].ppile[ii].piler!=0 && arbre->tran[kk].ppile[ii].element==carac[jj]) 
+                if(arbre->tran[kk].ppile[ii].piler!=0 && arbre->tran[kk].ppile[ii].element==carac[ii][jj]) 
                 {
                     exist=1;
                     break;
                 }
             }
-            if(exist==0 && arbre->tran[kk].ppile[ii].piler!=0)carac[nom_carac++]=arbre->tran[kk].ppile[ii].element;
+            if(exist==0 && arbre->tran[kk].ppile[ii].piler!=0) carac[ii][nom_carac[ii]++]=arbre->tran[kk].ppile[ii].element;
         }
-            
-    //si un caractere a seulement etats enpiles ou depiles.
-    for(int jj=0;jj<nom_carac;jj++)
-    {
-        int en=1,de=1;
-        for(int kk=0;kk<arbre->nom_tran;kk++)
-            for(int ii=0;ii<arbre->tran[kk].nomP;ii++)
-            {
-                if(arbre->tran[kk].ppile[ii].element==carac[jj])
+
+    //si un caractere a seulement etats enpiles ou depiles.        
+    for(int ll=0;ll<arbre->nom_pile;ll++)
+        for(int jj=0;jj<nom_carac[ll];jj++)
+        {
+            int en=1,de=1;
+            for(int kk=0;kk<arbre->nom_tran;kk++)
                 {
-                    if(arbre->tran[kk].ppile[ii].piler==1) en=0;
-                    if(arbre->tran[kk].ppile[ii].piler==-1) de=0;
+                    if(arbre->tran[kk].ppile[ll].element==carac[ll][jj] && arbre->tran[kk].ppile[ll].piler==1) en=0;
+                    if(arbre->tran[kk].ppile[ll].element==carac[ll][jj] && arbre->tran[kk].ppile[ll].piler==-1) de=0;
                 }
-                    
 
-            }
-        if(en!=0 || de!=0) 
-        {
-            printf("erreur semantique, le caractere '%c' a seulement etats enpiles ou depiles\n",carac[jj]);
-            return 0;
-        }
-    }
-
-
-    //si le caractere enpile et depile est un input
-    for(int jj=0;jj<nom_carac;jj++)
-    {
-        int inp=0;
-        for(int kk=0;kk<arbre->nom_tran;kk++)
-            if(carac[jj]==arbre->tran[kk].input) 
+            if(en!=0 || de!=0) 
             {
-                inp=1;
-                break;
+                printf("erreur semantique, le caractere '%c' a seulement etats enpiles ou depiles\n",carac[ll][jj]);
+                return 0;
             }
-        if(inp==0)
-        {
-            printf("erreur semantique, un caractere enpile et depile n'est pas un input\n");
-            return 0;
         }
-    }
+
+
+    //si le caractere enpile et depile est un input (je ne suis pas sure si c'est necessaire)
+    for(int ll=0;ll<arbre->nom_pile;ll++)
+        for(int jj=0;jj<nom_carac[ll];jj++)
+        {
+            int inp=0;
+            for(int kk=0;kk<arbre->nom_tran;kk++)
+            {
+                    if(carac[ll][jj]==arbre->tran[kk].input)
+                    {
+                        inp=1;
+                        break;
+                    }
+                if(inp==1) break;
+            }
+            if(inp==0)
+            {
+                printf("erreur semantique, un caractere enpile et depile '%c' n'est pas un input\n",carac[ll][jj]);
+                return 0;
+            }
+        }
         
     // si le nom d'etat est duplicated.
     for(int ii=0;ii<arbre->nom_etat;ii++)

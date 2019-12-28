@@ -173,7 +173,13 @@ void executer(char *input, int mode)
                 for(int l=0;l<VM[0];l++)
                 {
                     if(mode==1 && lp->p[l].sp==0) printf("Pile %d : Vide\t\t",l);
-                    if(mode==1 && lp->p[l].sp>0) printf("Pile %d : %c\t\t",l,lp->p[l].pile[lp->p[l].sp-1]);
+                    if(mode==1 && lp->p[l].sp>0) 
+                    {
+                        printf("Pile %d : ",l);
+                        for(int iii=0;iii<lp->p[l].sp;iii++)
+                            printf("%c  ",lp->p[l].pile[iii]);
+                        printf("\t\t");
+                    }
                 }
                 if(mode==1) printf("\n");
             }

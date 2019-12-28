@@ -1,17 +1,21 @@
 #include"lex1.h"
 #include"syn4.h"
 
-#define text "Test.txt"
 
-int main()
+int main(int argc, char* argv[])
 {
+    if(argc!=2) 
+    {
+        printf("erreur, manque ou trop d'arguments\n");
+        return 0;
+    }
     char buf[maxLine];
     FILE *fp;
     int i=0;
     lexeme lex[N][N];
     arb Arbre = (struct arbre*)malloc(sizeof(struct arbre));
     //si on ne peut pas ouvrir le fichier, on ne peut rien faire.
-    if((fp=fopen(text,"r"))==NULL)
+    if((fp=fopen(argv[1],"r"))==NULL)
     {
         printf("On ne peut pas ouvrir le fichier.");
         exit(1);

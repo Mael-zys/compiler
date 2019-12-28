@@ -1,18 +1,22 @@
-#include"lex1.h"
-#include"syn1.h"
-#include"sem1.h"
+#include"lex2.h"
+#include"syn2.h"
+#include"sem2.h"
+#include"compiler2.h"
 
-#define text "Test.txt"
-
-int main()
+int main(int argc, char* argv[])
 {
+    if(argc!=2) 
+    {
+        printf("erreur, manque ou trop d'arguments\n");
+        return 0;
+    }
     char buf[maxLine];
     FILE *fp;
     int i=0;
     lexeme lex[N][N];
     arb Arbre = (struct arbre*)malloc(sizeof(struct arbre));
     //si on ne peut pas ouvrir le fichier, on ne peut rien faire.
-    if((fp=fopen(text,"r"))==NULL)
+    if((fp=fopen(argv[1],"r"))==NULL)
     {
         printf("On ne peut pas ouvrir le fichier.");
         exit(1);
@@ -26,7 +30,10 @@ int main()
     if(syntaxique(lex,i,Arbre))
     {
         if(semantique(Arbre))
-            printf("correct semantique\n");
+        {
+            printf("0 warning, 0 erreur\n");
+            compiler(Arbre, argv[1]);
+        }
     }
     return 0;
 }

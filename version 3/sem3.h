@@ -96,7 +96,7 @@ int semantique(arb arbre)
         }
 
 
-    //si le caractere enpile et depile est un input
+    //si le caractere enpile et depile est un input (je ne suis pas sure si c'est necessaire)
     for(int ll=0;ll<arbre->nom_pile;ll++)
         for(int jj=0;jj<nom_carac[ll];jj++)
         {

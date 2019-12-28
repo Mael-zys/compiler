@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"Executeur.h"
+#include"executeur.h"
 
 int main(int argc, char* argv[])
 {
